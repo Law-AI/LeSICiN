@@ -1,0 +1,192 @@
+{
+    "fact": [
+        [
+            [
+                "fact",
+                "cites",
+                "section"
+            ],
+            [
+                "section",
+                "cited by",
+                "fact"
+            ]
+        ],
+        [
+            [
+                "fact",
+                "cites",
+                "section"
+            ],
+            [
+                "section",
+                "part of",
+                "topic"
+            ],
+            [
+                "topic",
+                "includes",
+                "section"
+            ],
+            [
+                "section",
+                "cited by",
+                "fact"
+            ]
+        ],
+        [
+            [
+                "fact",
+                "cites",
+                "section"
+            ],
+            [
+                "section",
+                "part of",
+                "topic"
+            ],
+            [
+                "topic",
+                "part of",
+                "chapter"
+            ],
+            [
+                "chapter",
+                "includes",
+                "topic"
+            ],
+            [
+                "topic",
+                "includes",
+                "section"
+            ],
+            [
+                "section",
+                "cited by",
+                "fact"
+            ]
+        ],
+        [
+            [
+                "fact",
+                "cites",
+                "section"
+            ],
+            [
+                "section",
+                "part of",
+                "topic"
+            ],
+            [
+                "topic",
+                "part of",
+                "chapter"
+            ],
+            [
+                "chapter",
+                "part of",
+                "act"
+            ],
+            [
+                "act",
+                "includes",
+                "chapter"
+            ],
+            [
+                "chapter",
+                "includes",
+                "topic"
+            ],
+            [
+                "topic",
+                "includes",
+                "section"
+            ],
+            [
+                "section",
+                "cited by",
+                "fact"
+            ]
+        ]
+    ],
+    "section": [
+        [
+            [
+                "section",
+                "cited by",
+                "fact"
+            ],
+            [
+                "fact",
+                "cites",
+                "section"
+            ]
+        ],
+        [
+            [
+                "section",
+                "part of",
+                "topic"
+            ],
+            [
+                "topic",
+                "includes",
+                "section"
+            ]
+        ],
+        [
+            [
+                "section",
+                "part of",
+                "topic"
+            ],
+            [
+                "topic",
+                "part of",
+                "chapter"
+            ],
+            [
+                "chapter",
+                "includes",
+                "topic"
+            ],
+            [
+                "topic",
+                "includes",
+                "section"
+            ]
+        ],
+        [
+            [
+                "section",
+                "part of",
+                "topic"
+            ],
+            [
+                "topic",
+                "part of",
+                "chapter"
+            ],
+            [
+                "chapter",
+                "part of",
+                "act"
+            ],
+            [
+                "act",
+                "includes",
+                "chapter"
+            ],
+            [
+                "chapter",
+                "includes",
+                "topic"
+            ],
+            [
+                "topic",
+                "includes",
+                "section"
+            ]
+        ]
+    ]
+}
