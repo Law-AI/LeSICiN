@@ -41,3 +41,9 @@ Additionally, you need to provide two files.
 ```
 (src node id, relationship name, trg node id)
 ```
+
+# Training
+```
+python run.py
+```
+### This repo will be thoroughly updated with richer comments and detailed usage instructions soon ###
