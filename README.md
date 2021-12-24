@@ -12,9 +12,11 @@ Extensive experiments on the dataset show that our model comfortably outperforms
 
 # Repo Organization
 
-> - model 
-  >> - model.py --- Contains main module LeSICiN
-> - data_helper.py --- Helper codes for constructing Dataset and batching logic
-> - helper.py --- Helper codes for creating vocabularies, label weights, training loop, metrics, etc.
-> - run.py --- Script for running training and evaluation, and eventual testing
+> - model
+  >> - basicmodules.py - Contains basic building blocks -- LSTM and Attention Networks
+  >> - submodules.py - Contains Text and Graph Encoders and Matching Network 
+  >> - model.py - Contains main module LeSICiN
+> - data_helper.py - Helper codes for constructing Dataset and batching logic
+> - helper.py - Helper codes for creating vocabularies, label weights, training loop, metrics, etc.
+> - run.py - Script for running training and evaluation, and eventual testing
 
