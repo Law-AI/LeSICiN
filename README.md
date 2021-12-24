@@ -20,3 +20,14 @@ Extensive experiments on the dataset show that our model comfortably outperforms
 - helper.py - Helper codes for creating vocabularies, label weights, training loop, metrics, etc.
 - run.py - Script for running training and evaluation, and eventual testing
 ```
+
+# Data
+Place all files inside the data/ folder.
+
+Each train, dev and test datasets should be in .jsonl format, i.e., one instance per line.
+Each instance should be a Python Dict with the following keys:
+```
+'id': string - string identifier for the document
+'text': List[string] - textual content represented as a list of sentences, each sentence being a string
+'labels': Optional[List[string]] - label ids of the cited Sections
+```
