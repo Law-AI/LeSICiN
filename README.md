@@ -9,3 +9,9 @@ We curate a large novel dataset for this task, including facts of cases from sev
 Modeling the statutes and training documents as a heterogeneous graph, our proposed model **LeSICiN** can learn rich textual and graphical features, and can also tune itself to correlate these features. 
 Thereafter, the model can be used to inductively predict links between test documents (new nodes whose graphical features are not available to the model) and statutes (existing nodes). 
 Extensive experiments on the dataset show that our model comfortably outperforms several state-of-the-art baselines, by exploiting the graphical structure along with textual features.
+
+# Repo Organization
+
+'''
+  run.py --- Script for running training and evaluation, and eventual testing
+'''
