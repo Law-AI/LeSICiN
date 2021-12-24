@@ -16,7 +16,7 @@ class LstmNet(torch.nn.Module):
         return hidden_all
 
 class AttnNet(torch.nn.Module):
-    def __init__(self, hidden_size, drop=0.5):
+    def __init__(self, hidden_size, drop=0.1):
         super().__init__()
         
         self.hidden_size = hidden_size

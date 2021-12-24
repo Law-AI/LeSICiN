@@ -2,7 +2,7 @@ import torch
 from model.submodules import HierAttnNet, MetapathAggrNet, MatchNet
 
 class LeSICiN(torch.nn.Module):
-    def __init__(self, hidden_size, num_labels, node_vocab_size, edge_vocab_size, vocab_size=None, label_weights=None, pthresh=0.65, lambdas=(0.25, 0.75), thetas=(1, 2, 3), drop=0.5):
+    def __init__(self, hidden_size, num_labels, node_vocab_size, edge_vocab_size, vocab_size=None, label_weights=None, pthresh=0.65, lambdas=(0.5, 0.5), thetas=(3, 2, 3), drop=0.1):
         super().__init__()
         
         self.text_encoder = HierAttnNet(hidden_size, vocab_size=vocab_size)

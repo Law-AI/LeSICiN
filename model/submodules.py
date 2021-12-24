@@ -37,7 +37,7 @@ class HierAttnNet(torch.nn.Module):
         return doc_hidden
 
 class MetapathAggrNet(torch.nn.Module):
-    def __init__(self, node_vocab_size, edge_vocab_size, hidden_size, drop=0.5, gdel=14.):
+    def __init__(self, node_vocab_size, edge_vocab_size, hidden_size, drop=0.1, gdel=14.):
         super().__init__()
         self.emb_range = gdel / hidden_size
         
