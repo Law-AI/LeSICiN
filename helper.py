@@ -70,7 +70,6 @@ def collate_func(examples, **kwargs):
 
 def train_dev_pass(model, optimizer, fact_loader, sec_batch, metrics, pred_threshold=None, train=False):
     model.train() if train else model.eval()
-    loss = 0
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
     
@@ -88,32 +87,39 @@ def train_dev_pass(model, optimizer, fact_loader, sec_batch, metrics, pred_thres
             optimizer.step()
             optimizer.zero_grad()
             
-        loss += loss.item()
-        metrics(predictions, fact_batch.labels)
-        
-        
-    loss /= i
-    return loss, metrics.calculate_metrics()
+        batch_loss = loss.item()
+        metrics(predictions, fact_batch.labels, loss=batch_loss)
+    
+    return metrics.calculate_metrics()
 
 class MultiLabelMetrics(torch.nn.Module):
-    def __init__(self, num_classes, dev='cuda:0'):
+    def __init__(self, num_classes, dev='cuda', loss=True):
         super().__init__()
         
         self.match = torch.zeros(num_classes, device=dev)
         self.predictions = torch.zeros(num_classes, device=dev)
         self.labels = torch.zeros(num_classes, device=dev)
+        self.counter = 0
+        if loss:
+            self.run_loss = 0
         
-    def forward(self, predictions, labels):
+    def forward(self, predictions, labels, loss=None):
         match = predictions * labels
         
         self.match += match.sum(dim=0)
         self.predictions += predictions.sum(dim=0)
         self.labels += labels.sum(dim=0)
+        self.counter += 1
+        if loss is not None:
+            self.run_loss += loss
         
     def refresh(self):
         self.match.fill_(0)
         self.predictions.fill_(0)
         self.labels.fill_(0)
+        self.counter = 0
+        if 'run_loss' in self.__dict__:
+            self.run_loss = 0
         return self
             
     def calculate_metrics(self, refresh=True):
@@ -137,7 +143,10 @@ class MultiLabelMetrics(torch.nn.Module):
         self.micro_prec = match_total / preds_total if preds_total > 0 else 0
         self.micro_rec = match_total / labels_total
         self.micro_f1 = 0 if self.micro_prec + self.micro_rec == 0 else 2 * self.micro_prec * self.micro_rec / (self.micro_prec + self.micro_rec) 
-        self.jacc = match_total / (preds_total + labels_total - match_total)      
+        self.jacc = match_total / (preds_total + labels_total - match_total)
+
+        if 'run_loss' in self.__dict__:
+            self.loss = self.run_loss / self.counter
         
         if refresh:
             self.refresh()

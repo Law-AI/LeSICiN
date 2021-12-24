@@ -18,36 +18,36 @@ np.random.seed(SEED)
 torch.manual_seed(SEED)
 torch.cuda.manual_seed(SEED)
 
-# sent2vec_model = sent2vec.Sent2vecModel()
-# sent2vec_model.load_model("ils2v.bin")
+sent2vec_model = sent2vec.Sent2vecModel()
+sent2vec_model.load_model("ils2v.bin")
 
-# train_dataset = LSIDataset(jsonl_file="data/train.jsonl")
-# train_dataset.preprocess()
-# train_dataset.sent_vectorize(sent2vec_model)
-# train_dataset.save_data("cache/train.pkl")
+train_dataset = LSIDataset(jsonl_file="data/train.jsonl")
+train_dataset.preprocess()
+train_dataset.sent_vectorize(sent2vec_model)
+train_dataset.save_data("cache/train.pkl")
 
-train_dataset = LSIDataset.load_data("cache/train.pkl")
+# train_dataset = LSIDataset.load_data("cache/train.pkl")
 
-# sec_dataset = LSIDataset(jsonl_file="data/secs.jsonl")
-# sec_dataset.preprocess()
-# sec_dataset.sent_vectorize(sent2vec_model)
-# sec_dataset.save_data("cache/secs.pkl")
+sec_dataset = LSIDataset(jsonl_file="data/secs.jsonl")
+sec_dataset.preprocess()
+sec_dataset.sent_vectorize(sent2vec_model)
+sec_dataset.save_data("cache/secs.pkl")
 
-sec_dataset = LSIDataset.load_data("cache/secs.pkl")
+# sec_dataset = LSIDataset.load_data("cache/secs.pkl")
 
-# dev_dataset = LSIDataset(jsonl_file="data/dev.jsonl")
-# dev_dataset.preprocess()
-# dev_dataset.sent_vectorize(sent2vec_model)
-# dev_dataset.save_data("cache/dev.pkl")
+dev_dataset = LSIDataset(jsonl_file="data/dev.jsonl")
+dev_dataset.preprocess()
+dev_dataset.sent_vectorize(sent2vec_model)
+dev_dataset.save_data("cache/dev.pkl")
 
-dev_dataset = LSIDataset.load_data("cache/dev.pkl")
+# dev_dataset = LSIDataset.load_data("cache/dev.pkl")
 
-# test_dataset = LSIDataset(jsonl_file="data/test.jsonl")
-# test_dataset.preprocess()
-# test_dataset.sent_vectorize(sent2vec_model)
-# test_dataset.save_data("cache/test.pkl")
+test_dataset = LSIDataset(jsonl_file="data/test.jsonl")
+test_dataset.preprocess()
+test_dataset.sent_vectorize(sent2vec_model)
+test_dataset.save_data("cache/test.pkl")
 
-test_dataset = LSIDataset.load_data("cache/test.pkl")
+# test_dataset = LSIDataset.load_data("cache/test.pkl")
 
 _, label_vocab = generate_vocabs(train_dataset, sec_dataset)
 with open("data/type_map.json") as fr:
@@ -72,7 +72,7 @@ E = len(edge_vocab)
 
 train_loader = torch.utils.data.DataLoader(
     train_dataset, 
-    batch_size=128, 
+    batch_size=64, 
     collate_fn=partial(
         collate_func, 
         label_vocab=label_vocab, 
@@ -118,26 +118,37 @@ dev_loader = torch.utils.data.DataLoader(
 for sec_batch in sec_loader:
     break
 
-lsc_model = LeSICiN(200, L, N, E, label_weights=sec_weights).cuda()
-optimizer = torch.optim.AdamW(lsc_model.parameters(), lr=1e-2, weight_decay=1e-4)
+lsc_model = LeSICiN(200, L, N, E, label_weights=sec_weights, lambdas=(0.25,0.75), thetas=(1,2,3)).cuda()
+
+lsc_model.load_state_dict(torch.load("saved/best_model2.pt", map_location='cuda'))
+
+with open("saved/best_metrics.pkl", 'rb') as fr:
+   best_metrics = pkl.load(fr)
+   best_loss = best_metrics.loss
+best_model = lsc_model.state_dict()
+# best_loss = 0.1601
+
+optimizer = torch.optim.AdamW(lsc_model.parameters(), lr=1e-4, weight_decay=1e-4)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=3, factor=0.2)
 train_mlmetrics = MultiLabelMetrics(L)
 dev_mlmetrics = MultiLabelMetrics(L)
 
-best_loss = float('inf')
-for epoch in range(30):
-    train_loss, train_mlmetrics = train_dev_pass(lsc_model, optimizer, train_loader, sec_batch, train_mlmetrics, train=True, pred_threshold=0.625)
-    dev_loss, dev_mlmetrics = train_dev_pass(lsc_model, optimizer, dev_loader, sec_batch, dev_mlmetrics, pred_threshold=0.625)
+
+for epoch in range(20):
+    train_mlmetrics = train_dev_pass(lsc_model, optimizer, train_loader, sec_batch, train_mlmetrics, train=True, pred_threshold=0.51)
+    dev_mlmetrics = train_dev_pass(lsc_model, optimizer, dev_loader, sec_batch, dev_mlmetrics, pred_threshold=0.51)
     
+    train_loss, dev_loss = train_mlmetrics.loss, dev_mlmetrics.loss
+
     if dev_loss < best_loss:
         best_loss = dev_loss
-        best_metrics = (dev_mlmetrics.macro_prec, dev_mlmetrics.macro_rec, dev_mlmetrics.macro_f1)
+        best_metrics = dev_mlmetrics
         best_model = lsc_model.state_dict()
         
     scheduler.step(dev_loss)
         
     print("%5d || %.4f | %.4f || %.4f | %.4f %.4f %.4f" % (epoch, train_loss, train_mlmetrics.macro_f1, dev_loss, dev_mlmetrics.macro_prec, dev_mlmetrics.macro_rec, dev_mlmetrics.macro_f1))
 
-torch.save(best_model.state_dict(), "saved/best_model.pt")
+torch.save(best_model, "saved/best_model.pt")
 with open("saved/best_metrics.pkl", 'wb') as fw:
 	pkl.dump(best_metrics, fw)
