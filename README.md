@@ -31,3 +31,13 @@ Each instance should be a Python Dict with the following keys:
 'text': List[string] - textual content represented as a list of sentences, each sentence being a string
 'labels': Optional[List[string]] - label ids of the cited Sections
 ```
+
+You also need to provide a pretrained **Sent2Vec** model if you wish to use our sentence vectorization-based preprocessing technique.
+Additionally, you need to provide two files.
+
+*type_map.json* - This maps the id of every node in the Unified graph (Label Tree + Citation Network) to its type. In our case, we have the following types - 'Act', 'Chapter', 'Topic' (part of the label tree); 'Section' (labels); 'Fact'
+
+*label_tree.json* and *citation_net.json* - Lists the edges of the two parts of the network respectively. Each member of the list should be a tuple of the form
+```
+(src node id, relationship name, trg node id)
+```
