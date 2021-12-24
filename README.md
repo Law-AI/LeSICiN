@@ -11,12 +11,12 @@ Thereafter, the model can be used to inductively predict links between test docu
 Extensive experiments on the dataset show that our model comfortably outperforms several state-of-the-art baselines, by exploiting the graphical structure along with textual features.
 
 # Repo Organization
-
-> - model
-  >> - basicmodules.py - Contains basic building blocks -- LSTM and Attention Networks
-  >> - submodules.py - Contains Text and Graph Encoders and Matching Network 
-  >> - model.py - Contains main module LeSICiN
-> - data_helper.py - Helper codes for constructing Dataset and batching logic
-> - helper.py - Helper codes for creating vocabularies, label weights, training loop, metrics, etc.
-> - run.py - Script for running training and evaluation, and eventual testing
-
+```
+- model
+  - basicmodules.py - Contains basic building blocks -- LSTM and Attention Networks
+  - submodules.py - Contains Text and Graph Encoders and Matching Network 
+  - model.py - Contains main module LeSICiN
+- data_helper.py - Helper codes for constructing Dataset and batching logic
+- helper.py - Helper codes for creating vocabularies, label weights, training loop, metrics, etc.
+- run.py - Script for running training and evaluation, and eventual testing
+```
