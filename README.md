@@ -45,7 +45,7 @@ Additionally, you need to provide four files.
 ```
 (src node type, relationship name, trg node type)
 ```
-The Sent2Vec model and the other 4 files are maintained at: https://doi.org/10.5281/zenodo.5806911. 
+The four data files, Sent2Vec model and the additional json files are maintained at: https://doi.org/10.5281/zenodo.5806911. 
 Please download them into the "data/" folder for running the codes.
 
 # Training
