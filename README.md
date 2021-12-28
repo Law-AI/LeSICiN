@@ -33,7 +33,7 @@ Each instance should be a Python Dict with the following keys:
 ```
 
 You also need to provide a pretrained **Sent2Vec** model if you wish to use our sentence vectorization-based preprocessing technique.
-Additionally, you need to provide two files.
+Additionally, you need to provide four files.
 
 *type_map.json* - This maps the id of every node in the Unified graph (Label Tree + Citation Network) to its type. In our case, we have the following types - 'Act', 'Chapter', 'Topic' (part of the label tree); 'Section' (labels); 'Fact'
 
@@ -41,6 +41,12 @@ Additionally, you need to provide two files.
 ```
 (src node id, relationship name, trg node id)
 ```
+*schemas.json* - This is a dict storing the metapath schemas for each source node type. Each schema is represented as a list of edges of the form
+```
+(src node type, relationship name, trg node type)
+```
+The Sent2Vec model and the other 4 files are maintained at: https://doi.org/10.5281/zenodo.5806911. 
+Please download them into the "data/" folder for running the codes.
 
 # Training
 ```
