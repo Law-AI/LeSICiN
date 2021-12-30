@@ -25,6 +25,30 @@ Extensive experiments on the dataset show that our model comfortably outperforms
 To make it easy to configure experiments on the go, we make use of two config files stored in configs/ folder.
 
 *data_path.json* - Specifies the full file paths for loading data, models, etc.
+```
+train_src [string]: path to train source data file
+dev_src [string]: path to dev source data file
+test_src [string]: path to test source data file
+sec_src [string]: path to sec source data file
+
+train_cache [string]: path to train cached data file
+dev_cache [string]: path to dev cached data file
+test_cache [string]: path to test cached data file
+sec_cache [string]: path to sec cached data file
+
+s2v_path [string/null]: path to pretrained sent2vec file (null if you do not want to sent vectorize)
+
+type_map [string]: path to file that maps id of each node to its type
+label_tree [string]: path to file that stores edges of the label tree
+citation_network [string]: path to file that stores edges of the Fact-Section citation net
+schemas [string]: path to file that stores the schemas
+
+model_load [string/null]: checkpointed model to load from (null to train from scratch)
+metrics_load [string/null]: saved validation metrics to act as benchmark (null to train from scratch)
+
+model_dump [string]: path to file where trained model will be saved
+metrics_dump [string]: path to file where best validation metrics will be saved
+```
 
 *hyperparams.json* - Controls the model and experiment hyperparameters and few other settings, like the seed.
 
