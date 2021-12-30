@@ -51,6 +51,33 @@ metrics_dump [string]: path to file where best validation metrics will be saved
 ```
 
 *hyperparams.json* - Controls the model and experiment hyperparameters and few other settings, like the seed.
+```
+seed [int]: universal seed for random, numpy and torch
+vocab_limit [int/null]: maximum vocabulary size [null if using sent vectorization]
+vocab_thresh [int/null]: minimum frequency for a word to be considered in vocabulary [null if using sent vectorization]
+weight_scheme {"tws", "vws"}: choose between Threshold-based weighting scheme and Vanilla Weighting Scheme as discussed in the paper
+tws_thresh [float/null]: TWS threshold as discussed in the paper (null if using VWS)
+
+train_bs [int]: batch size (no. of facts) for training
+dev_bs [int]: batch size (no. of facts) for validation
+test_bs [int]: batch size (no. of facts) for testing
+max_segments [int]: maximum no. of sentences per document (fact or section)
+max_segment_size [int/null]: maximum no. of words per sentence (null if using sent vectorization)
+num_mpath_samples [int]: no. of metapath instances to sample per metapath schema
+
+hidden_size [int]: hidden dimension for all intermediate layers (if using sent vectorization, make sure this is equal to the dimension of the sent2vec embeddings)
+
+opt_lr [float]: learning rate for optimizer
+opt_wt_decay [float]: optimizer weight decay
+sch_factor [float]: factor for the ReduceLROnPlateau scheduler
+sch_patience [int]: patience for the ReduceLROnPlateau scheduler
+num_epoch [int]: no. of training epochs
+
+pthresh [float]: prediction threshold to be used by model
+thetas [tuple[float]]: thetas in the order (attr, struct, align)
+lambdas [tuple[float]]: lambdas in the order (attr, align)
+dropout [float]: dropout factor for model layers
+```
 
 ## Training
 ```
