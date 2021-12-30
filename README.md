@@ -35,18 +35,25 @@ Each instance should be a Python Dict with the following keys:
 You also need to provide a pretrained **Sent2Vec** model if you wish to use our sentence vectorization-based preprocessing technique.
 Additionally, you need to provide four files.
 
-*type_map.json* - This maps the id of every node in the Unified graph (Label Tree + Citation Network) to its type. In our case, we have the following types - 'Act', 'Chapter', 'Topic' (part of the label tree); 'Section' (labels); 'Fact'
+*type_map* - This maps the id of every node in the Unified graph (Label Tree + Citation Network) to its type. In our case, we have the following types - 'Act', 'Chapter', 'Topic' (part of the label tree); 'Section' (labels); 'Fact'
 
-*label_tree.json* and *citation_net.json* - Lists the edges of the two parts of the network respectively. Each member of the list should be a tuple of the form
+*label_tree* and *citation_net* - Lists the edges of the two parts of the network respectively. Each member of the list should be a tuple of the form
 ```
 (src node id, relationship name, trg node id)
 ```
-*schemas.json* - This is a dict storing the metapath schemas for each source node type. Each schema is represented as a list of edges of the form
+*schemas* - This is a dict storing the metapath schemas for each source node type. Each schema is represented as a list of edges of the form
 ```
 (src node type, relationship name, trg node type)
 ```
 The four data files, Sent2Vec model and the additional json files are maintained at: https://doi.org/10.5281/zenodo.5806911. 
 Please download them into the "data/" folder for running the codes.
+
+# Configs
+To make it easy to configure experiments on the go, we make use of two config files stored in configs/ folder.
+
+*data_path.json* - Specifies the full file paths for loading data, models, etc.
+
+*hyperparams.json* - Controls the model and experiment hyperparameters and few other settings, like the seed.
 
 # Training
 ```
