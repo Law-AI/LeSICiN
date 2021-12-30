@@ -18,7 +18,7 @@ Extensive experiments on the dataset show that our model comfortably outperforms
   - model.py - Contains main module LeSICiN
 - data_helper.py - Helper codes for constructing Dataset and batching logic
 - helper.py - Helper codes for creating vocabularies, label weights, training loop, metrics, etc.
-- run.py - Script for running training and evaluation, and eventual testing
+- run.py - Script for running training and evaluation, and/or testing, or inference
 ```
 
 ## Configs
@@ -26,15 +26,17 @@ To make it easy to configure experiments on the go, we make use of two config fi
 
 *data_path.json* - Specifies the full file paths for loading data, models, etc.
 ```
-train_src [string]: path to train source data file
-dev_src [string]: path to dev source data file
-test_src [string]: path to test source data file
 sec_src [string]: path to sec source data file
+train_src [string/null]: path to train source data file (null if not running train-dev)
+dev_src [string/null]: path to dev source data file (null if not running train-dev)
+test_src [string/null]: path to test source data file (null if not running test)
+infer_src [string/null]: path to infer source data file (null if not running infer) 
 
-train_cache [string]: path to train cached data file
-dev_cache [string]: path to dev cached data file
-test_cache [string]: path to test cached data file
 sec_cache [string]: path to sec cached data file
+train_cache [string/null]: path to train cached data file (null if not running train-dev)
+dev_cache [string/null]: path to dev cached data file (null if not running train-dev)
+test_cache [string/null]: path to test cached data file (null if not running test)
+infer_cache [string/null]: path to infer cached data file (null if not running infer) 
 
 s2v_path [string/null]: path to pretrained sent2vec file (null if you do not want to sent vectorize)
 
@@ -47,12 +49,17 @@ model_load [string/null]: checkpointed model to load from (null to train from sc
 metrics_load [string/null]: saved validation metrics to act as benchmark (null to train from scratch)
 
 model_dump [string]: path to file where trained model will be saved
-metrics_dump [string]: path to file where best validation metrics will be saved
+dev_metrics_dump [string]: path to file where best validation metrics will be saved
+test_metrics_dump [string]: path to file where test metrics will be saved
+infer_trg [string]: path to file where inference predictions will be saved
 ```
 
 *hyperparams.json* - Controls the model and experiment hyperparameters and few other settings, like the seed.
 ```
 seed [int]: universal seed for random, numpy and torch
+do_train_dev [bool]: true if running train-dev
+do_test [bool]: true if running test
+do_infer [bool]: true if running infer
 vocab_limit [int/null]: maximum vocabulary size [null if using sent vectorization]
 vocab_thresh [int/null]: minimum frequency for a word to be considered in vocabulary [null if using sent vectorization]
 weight_scheme {"tws", "vws"}: choose between Threshold-based weighting scheme and Vanilla Weighting Scheme as discussed in the paper
