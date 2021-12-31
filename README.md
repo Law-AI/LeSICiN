@@ -27,6 +27,14 @@ id [string]: id/name of the fact instance / section instance
 text [list[string]]: text in the form of list of sentences (each sentence is a string)
 labels [list[string] / null]: gold-standard labels (not needed for inference) 
 ```
+Apart from this, we need a type_map, which will be a dict mapping node ids to their type (Act / Chapter / Topic / Section / Fact). We also need two files, storing the edges of the label tree and the Fact-Section citation network in the following format
+```
+(src node id, relationship name, trg node id)
+```
+Finally, we also need the metapath schemas for each node type. Each individual schema is a list of the edges that make up the metapath. An edge is described by the tuple
+```
+(src node type, relationship name, trg node type)
+```
 
 ## Configs
 To make it easy to configure experiments on the go, we make use of two config files stored in configs/ folder.
