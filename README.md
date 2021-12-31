@@ -68,6 +68,7 @@ tws_thresh [float/null]: TWS threshold as discussed in the paper (null if using 
 train_bs [int]: batch size (no. of facts) for training
 dev_bs [int]: batch size (no. of facts) for validation
 test_bs [int]: batch size (no. of facts) for testing
+infer_bs [int]: batch size (no. of facts) for inference
 max_segments [int]: maximum no. of sentences per document (fact or section)
 max_segment_size [int/null]: maximum no. of words per sentence (null if using sent vectorization)
 num_mpath_samples [int]: no. of metapath instances to sample per metapath schema
