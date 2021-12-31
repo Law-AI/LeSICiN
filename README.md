@@ -10,6 +10,17 @@ Modeling the statutes and training documents as a heterogeneous graph, our propo
 Thereafter, the model can be used to inductively predict links between test documents (new nodes whose graphical features are not available to the model) and statutes (existing nodes). 
 Extensive experiments on the dataset show that our model comfortably outperforms several state-of-the-art baselines, by exploiting the graphical structure along with textual features.
 
+## Citation
+If you use this dataset or the codes, please refer to the following paper:
+```
+  @inproceedings{paul2022lesicin,
+   author = {Paul, Shounak and Goyal, Pawan and Ghosh, Saptarshi},
+   title = {{LeSICiN: A Heterogeneous Graph-based Approach for Automatic Legal Statute Identification from Indian Legal Documents}},
+   booktitle = {{Proceedings of the 36th AAAI Conference on Artificial Intelligence (AAAI)}},
+   year = {2022}
+  }
+ ```
+
 ## Repo Organization
 ```
 - model
