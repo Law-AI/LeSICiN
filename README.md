@@ -87,8 +87,8 @@ lambdas [tuple[float]]: lambdas in the order (attr, align)
 dropout [float]: dropout factor for model layers
 ```
 
-## Training
+## Running the Script
+All kinds of operations (train/dev/test/infer) can be performed by the "run.py" code, by appropriately configuring its settings. See the section above to understand the different settings. You can run the script using:
 ```
 python run.py
 ```
-### This repo will be thoroughly updated with richer comments and detailed usage instructions soon ###
