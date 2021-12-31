@@ -20,6 +20,13 @@ Extensive experiments on the dataset show that our model comfortably outperforms
 - helper.py - Helper codes for creating vocabularies, label weights, training loop, metrics, etc.
 - run.py - Script for running training and evaluation, and/or testing, or inference
 ```
+## Data 
+Datasets are in the form of .jsonl files, with one instance (dict) per line, having the following keys
+```
+id [string]: id/name of the fact instance / section instance
+text [list[string]]: text in the form of list of sentences (each sentence is a string)
+labels [list[string] / null]: gold-standard labels (not needed for inference) 
+```
 
 ## Configs
 To make it easy to configure experiments on the go, we make use of two config files stored in configs/ folder.
@@ -106,4 +113,8 @@ In case of train / dev / test, a metrics object is saved in the path specified i
 - jaccard
 ```
 If training is performed, the model state corresponding to the best dev loss is also saved in the path specified in model dump key in data path config.
-During inference, instead of metrics, a jsonl file is saved in the path specified in infer trg key in data path config.
+During inference, instead of metrics, a jsonl file is saved in the path specified in infer trg key in data path config. Each line in the jsonl file is a dict with the following keys:
+```
+id [string]: id of the fact instance
+predictions [list[string]]: model predictions for this instance
+```
