@@ -1,12 +1,14 @@
 {
+	"sec_src": "data/secs.jsonl",
 	"train_src": "data/train.jsonl",
 	"dev_src": "data/dev.jsonl",
 	"test_src": "data/test.jsonl",
-	"sec_src": "data/secs.jsonl",
+	"infer_src": null,
+	"sec_cache": "cache/secs.pkl",
 	"train_cache": "cache/train.pkl",
 	"dev_cache": "cache/dev.pkl",
 	"test_cache": "cache/test.pkl",
-	"sec_cache": "cache/secs.pkl",
+	"infer_cache": "cache/infer.pkl",
 	"s2v_path": "data/ils2v.bin",
 	"type_map": "data/type_map.json",
 	"label_tree": "data/label_tree.json",
@@ -15,5 +17,7 @@
 	"model_load": null,
 	"metrics_load": null,
 	"model_dump": "saved/best_model.pt",
-	"metrics_dump": "saved/best_metrics.json"
+	"dev_metrics_dump": "saved/dev_metrics.json",
+	"test_metrics_dump": "saved/test_metrics.json",
+	"infer_trg": null
 }
