@@ -92,3 +92,16 @@ All kinds of operations (train/dev/test/infer) can be performed by the "run.py" 
 ```
 python run.py
 ```
+## Outputs
+In case of train / dev / test, a metrics object is saved, which contains the following scores
+```
+- macro
+  - precision
+  - recall
+  - f1
+- micro
+  - precision
+  - recall
+  - f1
+- jaccard
+```
