@@ -2,18 +2,18 @@ import torch
 from model.basicmodules import LstmNet, AttnNet
 
 class HierAttnNet(torch.nn.Module):
-    def __init__(self, hidden_size, vocab_size=None):
+    def __init__(self, hidden_size, vocab_size=None, drop=0.1):
         super().__init__()
         
         if vocab_size is not None:
             self.word_embedding = torch.nn.Embedding(vocab_size, hidden_size)
             self.sent_lstm = LstmNet(hidden_size)
-            self.sent_attn = AttnNet(hidden_size)
+            self.sent_attn = AttnNet(hidden_size, drop=drop)
         
         self.doc_lstm = LstmNet(hidden_size)
-        self.doc_attn = AttnNet(hidden_size)
+        self.doc_attn = AttnNet(hidden_size, drop=drop)
         
-    def forward(self, tokens=None, doc_inputs=None, mask=None, sent_dyn_context=None, doc_dyn_context=None):
+    def forward(self, tokens=None, doc_inputs=None, mask=None, sent_dyn_context=None, doc_dyn_context=None): # [B, S, W], [B, S, H], [B, S, W] / [B, S], [B, S, H], [B, H]
         if tokens is not None:
             sent_inputs = self.word_embedding(tokens)
             
@@ -50,7 +50,7 @@ class MetapathAggrNet(torch.nn.Module):
         self.edge_embedding = torch.nn.Embedding(edge_vocab_size, hidden_size // 2)
         self.edge_embedding.weight.data.uniform_(- self.emb_range, self.emb_range)
         
-        self.intra_attention = AttnNet(2 * hidden_size)
+        self.intra_attention = AttnNet(2 * hidden_size, drop=drop)
         
         self.inter_fc = torch.nn.Linear(2 * hidden_size, 2 * hidden_size)
         self.inter_context = torch.nn.Parameter(torch.rand(2 * hidden_size))
@@ -58,7 +58,8 @@ class MetapathAggrNet(torch.nn.Module):
         self.output_fc = torch.nn.Linear(2 * hidden_size, hidden_size)
         
         self.dropout = torch.nn.Dropout(drop)
-        
+    
+    # Embed each node index using the node embedding matrix and then scale to generate same sized embeddings for each node type     
     def embed_and_scale(self, tokens, edge_tokens, schema): # [B, L+1], [B, L]
         inputs, edge_inputs = [], []
         
@@ -76,7 +77,7 @@ class MetapathAggrNet(torch.nn.Module):
         edge_inputs = torch.stack(edge_inputs, dim=1) # [B, L, H]
         return inputs, edge_inputs
     
-    
+    # We are following the official implementation of the RotatE algorithm --- https://github.com/DeepGraphLearning/KnowledgeGraphEmbedding
     def rotational_encoding(self, inputs, edge_inputs): # [B, L+1, H], [B, L, H/2]
         PI = 3.14159265358979323846
         hidden = inputs.clone()
@@ -96,20 +97,27 @@ class MetapathAggrNet(torch.nn.Module):
                                
     def forward(self, tokens, edge_tokens, schemas, intra_context=None, inter_context=None): 
         hidden = []
-        for i in range(len(tokens)):                       
+
+        # serially perform intra-metapath aggregation across the different schemas
+        for i in range(len(tokens)):
+            # flatten out the multiple samples of the same schema                       
             mpath_tokens = tokens[i].view(-1, tokens[i].size(2)) # [M*D, L+1]
             mpath_edge_tokens = edge_tokens[i].view(-1, edge_tokens[i].size(2)) # [M*D, L]
                                
             mpath_inputs, mpath_edge_inputs = self.embed_and_scale(mpath_tokens, mpath_edge_tokens, schemas[i])
                                
             mpath_hidden_all = self.rotational_encoding(mpath_inputs, mpath_edge_inputs) # [M*D, L+1, H]
-            mpath_hidden_all = torch.cat([mpath_hidden_all[:, 0, :].unsqueeze(1).repeat(1, mpath_hidden_all.size(1) - 1, 1), mpath_hidden_all[:, 1:, :]], dim=2) # [M*D, L, 2H]
-                               
+
+            # the first element in the sequence is the target node, the rest are transformed embeddings for other nodes in the metapath
+            mpath_hidden_all = torch.cat([mpath_hidden_all[:, 0, :].unsqueeze(1).repeat(1, mpath_hidden_all.size(1) - 1, 1), mpath_hidden_all[:, 1:, :]], dim=2) # [M*D, L, 2H]                   
             mpath_hidden = torch.relu(self.intra_attention(mpath_hidden_all, dyn_context=intra_context)) # [M*D, 2H]
+
+            # aggregate transformed embeddings from multiple samples of the same schema 
             mpath_hidden = torch.sum(mpath_hidden.view(tokens[i].size(0), tokens[i].size(1), -1), dim=0) # [D, 2H]
             hidden.append(mpath_hidden)
         hidden = torch.stack(hidden, dim=1) # [D, N, 2H]
         
+        # perform inter-metapath aggregation across transformed embeddings for each schema
         hidden_act = torch.mean(torch.tanh(self.dropout(self.inter_fc(hidden))), dim=0).expand_as(hidden) # [D, N, 2H]
         context = self.inter_context.unsqueeze(0).repeat(hidden_act.size(0), 1).unsqueeze(2) if inter_context is None else inter_context.unsqueeze(2)
         scores = torch.bmm(hidden_act, context) # [D, N, 1]
@@ -120,16 +128,16 @@ class MetapathAggrNet(torch.nn.Module):
         return outputs
 
 class MatchNet(torch.nn.Module):
-    def __init__(self, hidden_size, num_labels, drop=0.5):
+    def __init__(self, hidden_size, num_labels, drop=0.1):
         super().__init__()
         
         self.match_lstm = LstmNet(hidden_size)
-        self.match_attn = AttnNet(hidden_size)
+        self.match_attn = AttnNet(hidden_size, drop=drop)
         self.match_fc = torch.nn.Linear(2 * hidden_size, num_labels)
         
         self.dropout = torch.nn.Dropout(drop)
         
-    def forward(self, fact_inputs, sec_inputs, context=None):
+    def forward(self, fact_inputs, sec_inputs, context=None): # [D, H], [C, H]
         sec_inputs = sec_inputs.expand(fact_inputs.size(0), sec_inputs.size(0), sec_inputs.size(1)) # [D, C, H]
         
         sec_hidden_all = self.match_lstm(sec_inputs) # [D, C, H]
