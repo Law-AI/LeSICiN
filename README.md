@@ -93,7 +93,7 @@ All kinds of operations (train/dev/test/infer) can be performed by the "run.py" 
 python run.py
 ```
 ## Outputs
-In case of train / dev / test, a metrics object is saved, which contains the following scores
+In case of train / dev / test, a metrics object is saved in the path specified in dev / test metrics dump key in data path config, which contains the following scores:
 ```
 - macro
   - precision
@@ -105,3 +105,5 @@ In case of train / dev / test, a metrics object is saved, which contains the fol
   - f1
 - jaccard
 ```
+If training is performed, the model state corresponding to the best dev loss is also saved in the path specified in model dump key in data path config.
+During inference, instead of metrics, a jsonl file is saved in the path specified in infer trg key in data path config.
