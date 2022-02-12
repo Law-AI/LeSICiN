@@ -46,7 +46,7 @@ Finally, we also need the metapath schemas for each node type. Each individual s
 ```
 (src node type, relationship name, trg node type)
 ```
-You can find all these files at: https://doi.org/10.5281/zenodo.6051901
+You can find all these files at: https://doi.org/10.5281/zenodo.6053791
 
 ## Configs
 To make it easy to configure experiments on the go, we make use of two config files stored in configs/ folder.
